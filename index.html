@@ -486,6 +486,8 @@ function onChangeAlpabet(e) {
     document.getElementById("mY").setAttribute("max", data[current.alpabet].m.maxy);
 
     renderList();
+
+    onChangeDoorTypes({ target: { value: data[current.alpabet].types[0] } });
 }
 
 function onChangeDoorTypes(e) {
