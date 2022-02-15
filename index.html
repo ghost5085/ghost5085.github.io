@@ -392,7 +392,7 @@ function renderList() {
 
 function addD() {
     if(document.getElementById("dCount").value !== "") {
-        if(!document.getElementById("dX").validity.vaild || !document.getElementById("dY").validity.vaild) return;
+        if(!document.getElementById("dX").validity.valid || !document.getElementById("dY").validity.valid) return;
         const dx = Number(document.getElementById("dX").value);
         const dy = Number(document.getElementById("dY").value);
         const xkey = dx <= 300 ? 300 : Math.ceil(dx / 100) * 100;
@@ -427,7 +427,7 @@ function addD() {
 
 function addG() {
     if(document.getElementById("gCount").value !== "") {
-        if(!document.getElementById("gX").validity.vaild) return;
+        if(!document.getElementById("gX").validity.valid || !document.getElementById("gY").validity.valid) return;
         const gx = Number(document.getElementById("gX").value);
         const xkey = gx <= 165 ? 165 : 300;
         
@@ -444,7 +444,7 @@ function addG() {
 
 function addM() {
     if(document.getElementById("mCount").value !== "") {
-        if(!document.getElementById("mY").validity.vaild) return;
+        if(!document.getElementById("mY").validity.valid || !document.getElementById("mX").validity.valid) return;
         const my = Number(document.getElementById("mY").value);
         const yKey = my <= 1220 ? 1220 : 2400;
         datas.push({
