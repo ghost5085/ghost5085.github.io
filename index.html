@@ -58,6 +58,38 @@ h3 {
             <input class="form-control col" type="number" id="dD" readonly placeholder="두께 18mm 고정">
             <input class="form-control col" type="number" id="dCount" placeholder="도어 수량">
         </div>
+        <div class="row">
+            <div class="col">
+                <label class="col">
+                    상부장
+                    <input class="form-check-input" type="radio" name="dir" id="dir" value="상부장" checked>
+                </label>
+                <label class="col">
+                    하부장
+                    <input class="form-check-input" type="radio" name="dir" id="dir" value="하부장">
+                </label>
+            </div>
+            <div class="col">
+                스마트바 추가 여부
+                <label class="col">
+                    O
+                    <input onchange="onChangeS(event)" class="form-check-input" type="radio" name="ds" id="dsv" value="true">
+                </label>
+                <label class="col">
+                    X
+                    <input onchange="onChangeS(event)" class="form-check-input" type="radio" name="ds" id="dsv" value="false" checked>
+                </label>
+            </div>
+        </div>
+        <div class="row" id="so" style="display: none;">
+            <select class="form-select col" id="sColors">
+                <option value="실버">실버</option>
+                <option value="블랙">블랙</option>
+                <option value="화이트">화이트</option>
+                <option value="골드">골드</option>
+            </select>
+            <input min="1" max="70" class="form-control col" type="number" id="sx" placeholder="손잡이 길이 (cm)">
+        </div>
         <button onclick="addD()" type="button" class="btn btn-primary justify-content-center" type="button">담기</button>
         <h3>걸레받이</h3>
         <div class="row">
@@ -331,12 +363,36 @@ function remove(i) {
 }
 
 function renderList() {
-    document.getElementById("list").innerHTML = datas.map(v => `<div class="row"> <div class="col">${v.title}</div><button type="button" class="btn btn-danger" onclick="remove(${v.index})">삭제하기</button> </div>`)
+    document.getElementById("list").innerHTML = datas.map(v => {
+        switch(v.type) {
+            case "d":
+                return {
+                    title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
+                    result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                }
+            case "g":
+                return {
+                    title: v.title + data[current.alpabet].g[v.xkey] * v.count,
+                    result: data[current.alpabet].g[v.xkey] * v.count,
+                }
+            case "m":
+                return {
+                    title: v.title + data[current.alpabet].m[v.ykey] * v.count,
+                    result: data[current.alpabet].m[v.ykey] * v.count
+                }
+            case "k":
+                return {
+                    title: v.title + 3000 * v.count,
+                    result: 3000 * v.count
+                }
+        }
+    }).map(v => `<div class="row"> <div class="col">${v.title}</div><button type="button" class="btn btn-danger" onclick="remove(${v.index})">삭제하기</button> </div>`)
     renderSubmit();
 }
 
 function addD() {
     if(document.getElementById("dCount").value !== "") {
+        if(!document.getElementById("dX").validity.vaild || !document.getElementById("dY").validity.vaild) return;
         const dx = Number(document.getElementById("dX").value);
         const dy = Number(document.getElementById("dY").value);
         const xkey = dx <= 300 ? 300 : Math.ceil(dx / 100) * 100;
@@ -356,9 +412,14 @@ function addD() {
         }
         
         datas.push({
-            title: `${current.alpabet}, ${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}`,
+            title: `${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").value}, 스마트바 여부 ${document.getElementById("dsv").value === "true" ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
             index: id++,
-            result: data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)
+            xkey,
+            ykey,
+            type: "d",
+            s: Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000,
+            t: current.type,
+            count: Number(document.getElementById("dCount").value)
         });
         renderList();
     }
@@ -366,13 +427,16 @@ function addD() {
 
 function addG() {
     if(document.getElementById("gCount").value !== "") {
+        if(!document.getElementById("gX").validity.vaild) return;
         const gx = Number(document.getElementById("gX").value);
         const xkey = gx <= 165 ? 165 : 300;
         
         datas.push({
-            title: `${document.getElementById("gColors").value}, ${document.getElementById("gX").value}, ${document.getElementById("gY").value}, ${document.getElementById("gCount").value}, ${data[current.alpabet].g[xkey] * Number(document.getElementById("gCount").value)}`,
+            title: `${document.getElementById("gColors").value}, ${document.getElementById("gX").value}, ${document.getElementById("gY").value}, ${document.getElementById("gCount").value}, `,
             index: id++,
-            result: data[current.alpabet].g[xkey] * Number(document.getElementById("gCount").value)
+            xkey,
+            type: "g",
+            count: Number(document.getElementById("gCount").value)
         });
         renderList();
     }
@@ -380,12 +444,15 @@ function addG() {
 
 function addM() {
     if(document.getElementById("mCount").value !== "") {
+        if(!document.getElementById("mY").validity.vaild) return;
         const my = Number(document.getElementById("mY").value);
         const yKey = my <= 1220 ? 1220 : 2400;
         datas.push({
-            title: `${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, ${data[current.alpabet].m[yKey] * Number(document.getElementById("mCount").value)}`,
+            title: `${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, `,
             index: id++,
-            reuslt: data[current.alpabet].m[yKey] * Number(document.getElementById("mCount").value)
+            ykey,
+            type: "m",
+            count: Number(document.getElementById("mCount").value)
         });
         renderList();
     }
@@ -394,9 +461,10 @@ function addM() {
 function addK() {
     if(document.getElementById("kCount").value !== "") {
         datas.push({
-            title: `${"일반형 경첩 및 댐퍼 경첩 1조"}, ${document.getElementById("kCount").value}, ${3000 * Number(document.getElementById("kCount").value)}`,
+            title: `${"일반형 경첩 및 댐퍼 경첩 1조"}, ${document.getElementById("kCount").value}, ${3000 * Number(document.getElementById("kCount").value)}, `,
             index: id++,
-            result: 3000 * Number(document.getElementById("kCount").value)
+            type: "k",
+            count: Number(document.getElementById("kCount").value)
         });
         renderList();
     }
@@ -416,6 +484,8 @@ function onChangeAlpabet(e) {
     document.getElementById("mY").setAttribute("min", data[current.alpabet].m.miny);
     document.getElementById("mX").setAttribute("max", data[current.alpabet].m.maxx);
     document.getElementById("mY").setAttribute("max", data[current.alpabet].m.maxy);
+
+    renderList();
 }
 
 function onChangeDoorTypes(e) {
@@ -430,7 +500,26 @@ function onChangeType(e) {
 }
 
 function renderSubmit() {
-    let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+    let result = datas.map(v => {
+        switch(v.type) {
+            case "d":
+                return {
+                    result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                }
+            case "g":
+                return {
+                    result: data[current.alpabet].g[v.xkey] * v.count
+                }
+            case "m":
+                return {
+                    result: data[current.alpabet].m[v.ykey] * v.count
+                }
+            case "k":
+                return {
+                    result: 3000 * v.count
+                }
+        }
+    }).reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
 
     document.getElementById("t").innerHTML = result;
     document.getElementById("c").innerHTML = result / 1000;
@@ -438,6 +527,14 @@ function renderSubmit() {
 
 onChangeAlpabet({ target: { value: "A" } });
 onChangeDoorTypes({ target: { value: "무광" } });
+
+function onChangeS(e) {
+    if(e.target.value == "true") {
+        document.getElementById("so").style.display = "flex";
+    } else {
+        document.getElementById("so").style.display = "none";
+    }
+}
 
 function onSubmit(e) {
     let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
