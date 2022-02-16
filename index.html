@@ -52,11 +52,15 @@ h3 {
         </div>
         <div class="row">
             <input class="form-control col" type="number" id="dX" min="100" max="900" placeholder="도어 가로 (mm)">
-            <input class="form-control col" type="number" id="dY" min="600" max="2000" placeholder="도어 세로 (mm)">
+            <input class="form-control col" type="number" id="dY" min="10" max="2000" placeholder="도어 세로 (mm)">
         </div>
         <div class="row">
             <input class="form-control col" type="number" id="dD" readonly placeholder="두께 18mm 고정">
             <input class="form-control col" type="number" id="dCount" placeholder="도어 수량">
+        </div>
+        <div class="row">
+            <input class="form-control col" type="text" id="kp" placeholder="경첩위치 ex)좌경첩/우경첩/윗경첩/서랍">
+            <input class="form-control col" type="text" id="bp" placeholder="보링위치 ex)상100/하100/서랍">
         </div>
         <div class="row">
             <div class="col">
@@ -351,7 +355,8 @@ h3 {
         let current = {
     alpabet: "A",
     doorType: "무광",
-    type: "일반"
+    type: "일반",
+    isS: false
 }
 const datas = [];
 let id = 0;
@@ -366,9 +371,16 @@ function renderList() {
     document.getElementById("list").innerHTML = datas.map(v => {
         switch(v.type) {
             case "d":
-                return {
-                    title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
-                    result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                if(current.isS) {
+                    return {
+                        title: v.title + v.st(current.isS) + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
+                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                    }
+                } else {
+                    return {
+                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count),
+                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count,
+                    }
                 }
             case "g":
                 return {
@@ -412,12 +424,13 @@ function addD() {
         }
         
         datas.push({
-            title: `${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").value}, 스마트바 여부 ${document.getElementById("dsv").value === "true" ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
+            title: `${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").value}, `,
             index: id++,
             xkey,
             ykey,
             type: "d",
             s: Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000,
+            st: (b) => `스마트바 여부 ${b ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
             t: current.type,
             count: Number(document.getElementById("dCount").value)
         });
@@ -533,16 +546,19 @@ onChangeDoorTypes({ target: { value: "무광" } });
 function onChangeS(e) {
     if(e.target.value == "true") {
         document.getElementById("so").style.display = "flex";
+        current.isS = true;
     } else {
         document.getElementById("so").style.display = "none";
+        current.isS = false;
     }
+    renderList();
 }
 
 function onSubmit(e) {
     let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
 
     e.preventDefault();
-    fetch("https://script.google.com/macros/s/AKfycbyXsEJQUGm4wDXetptS_ZVpFKh5w7wydpumEW1nFAn8PnfAnkIEHPBwZ4MeC8FkeR0xZA/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbyfVno0y_GNgXXTqRMMmQ5CbL1N8YpMQpxbe2UrQt5ONsXH6LkJXfHk8UgQm6lDihxjwA/exec", {
         method: 'POST',
         body: JSON.stringify({
             name: document.getElementById("name").value,
