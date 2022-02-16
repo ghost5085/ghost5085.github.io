@@ -143,6 +143,7 @@ h3 {
             <textarea class="form-control" id="need" placeholder="요구사항"></textarea>
         </div>
         <button type="submit" class="btn btn-primary justify-content-center" type="submit">견적서 전송</button>
+        견적서 보내신 후 01055311989 이 번호로 연락바랍니다.
     </form>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script>
@@ -190,10 +191,10 @@ h3 {
         },
         m: {
             colors: ['매트 화이트', '매트 캐시미어', '매트 밀크화이트', '매트 샌드그레이', '매트 아이보리', '매트 라이트그레이', '매트 브라운', '매트 그레이', '매트 로즈브라운', '매트 다크그레이', '매트 카페브라운', '매트 블랙', '매트 코튼블루', '매트 로지핑크', '매트 미스트그린', '매트 바이올렛', '매트 스모키올리브', '매트 딥그린', '매트 딥블루', '매트 인디고', '소프트 브라운', '소프트 그레이', '소프트 민트', '소프트 파스타치오', '글로시화이트', '글로시 캐시미어', '글로시 밀크화이트', '글로시 샌드그레이', '글로시 아이보리', '글로시 라이트그레이', '글로시 브라운', '글로시 그레이', '글로시 로즈브라운', '글로시 다크그레이', '글로시 카페브라운', '글로시 블랙', '글로시 코튼블루', '글로시 로지핑크', '글로시미스트그린', '글로시 바이올렛', '글로시 스모키올리브', '글로시 딥그린', '글로시 딥블루', '글로시 인디고', '라이트 그레이', '샌드 브라운', '블루 그레이', '크림월넛', '웨이브 화이트', '웨이브 그레이', '마블 화이트', '마블 블랙', '도브 화이트', '스톤 화이트', '스톤 그레이', '스톤 블랙', '윈체스터 월넛', '소프트 월넛', '트리플 오크 브라운', '코임브라', '텐 파인 화이트', '망플 비치'],
-            minx: 10,
-            maxx: 200,
-            miny: 100,
-            maxy: 2400,
+            miny: 10,
+            maxy: 200,
+            minx: 100,
+            maxx: 2400,
             1220: 17000,
             2400: 31000
         },
@@ -242,10 +243,10 @@ h3 {
         },
         m: {
             colors: ['레더 크림', '레더 모카', '콘크리트 화이트', '콘트리트 그레이', '매트 펄 화이트', '매트 펄 다크그레이', '매트 펄 인디고', '매트 펄 블랙', '글로시 펄 화이트', '글로시 펄 다크그레이', '글로시 펄 인디고', '글로시 펄 블랙'],
-            minx: 10,
-            maxx: 200,
-            miny: 100,
-            maxy: 2400,
+            miny: 10,
+            maxy: 200,
+            minx: 100,
+            maxx: 2400,
             1220: 19000,
             2400: 34000
         },
@@ -292,10 +293,10 @@ h3 {
         },
         m: {
             colors: ['사피아노 화이트', '사피아노 그레이', '사피아노 블루', '헤어라인 화이트', '헤어라인 그레이', '슈가 엘름', '프렌치 오크', '피넛 오크', '카카오 월넛', '크림 화이트', '크림 라이트 그레이'],
-            minx: 10,
-            maxx: 150,
-            miny: 100,
-            maxy: 2400,
+            miny: 10,
+            maxy: 150,
+            minx: 100,
+            maxx: 2400,
             1220: 19000,
             2400: 36000
         },
@@ -341,10 +342,10 @@ h3 {
         },
         m: {
             colors: ['메탈 바이브레이션 실버', '메탈 바이브레이션 브라운', '메탈 헤어라인'],
-            minx: 10,
-            maxx: 200,
-            miny: 100,
-            maxy: 2400,
+            miny: 10,
+            maxy: 200,
+            minx: 100,
+            maxx: 2400,
             1220: 26000,
             2400: 43000
         },
@@ -458,7 +459,7 @@ function addG() {
 function addM() {
     if(document.getElementById("mCount").value !== "") {
         if(!document.getElementById("mY").validity.valid || !document.getElementById("mX").validity.valid) return;
-        const my = Number(document.getElementById("mY").value);
+        const my = Number(document.getElementById("mX").value);
         const yKey = my <= 1220 ? 1220 : 2400;
         datas.push({
             title: `몰딩, ${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, `,
@@ -592,8 +593,10 @@ function onSubmit(e) {
         },
         mode: "no-cors"
     }).then(response => {
+        alert("견적서 전송 완료");
         console.log("success:", response);
     }).catch(err => {
+        alert("견적서 전송 실패");
         console.log("Error:" + err);
     });
 }
