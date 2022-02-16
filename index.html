@@ -134,7 +134,6 @@ h3 {
             <p>천원단위 주문 갯수: </p> 
             <p id="c">0</p>
         </div>
-        <button onclick="renderSubmit()" type="button" class="btn btn-primary justify-content-center" type="submit">견적 확인하기</button>
         <div class="row">
             <input class="form-control col" type="text" id="name" placeholder="주문자명">
             <input class="form-control col" type="tel" id="phone" placeholder="연락처">
@@ -374,29 +373,29 @@ function renderList() {
             case "d":
                 if(v.ss) {
                     return {
-                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
-                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                        title: v.title + v.result,
+                        result: v.result,
                     }
                 } else {
                     return {
-                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count),
-                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count,
+                        title: v.title + v.result,
+                        result: v.result,
                     }
                 }
             case "g":
                 return {
-                    title: v.title + data[current.alpabet].g[v.xkey] * v.count,
-                    result: data[current.alpabet].g[v.xkey] * v.count,
+                    title: v.title + v.result,
+                    result: v.result,
                 }
             case "m":
                 return {
-                    title: v.title + data[current.alpabet].m[v.ykey] * v.count,
-                    result: data[current.alpabet].m[v.ykey] * v.count
+                    title: v.title + v.result,
+                    result: v.result
                 }
             case "k":
                 return {
-                    title: v.title + 3000 * v.count,
-                    result: 3000 * v.count
+                    title: v.title + v.result,
+                    result: v.result
                 }
         }
     }).map(v => `<div class="row"> <div class="col">${v.title}</div><button type="button" class="btn btn-danger" onclick="remove(${v.index})">삭제하기</button> </div>`)
@@ -427,13 +426,10 @@ function addD() {
         datas.push({
             title: `도어, ${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").checked ? "상부장" : "하부장"}, 스마트바 여부 ${current.isS ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
             index: id++,
-            xkey,
-            ykey,
+            result: current.isS ? Number(document.getElementById("dCount").value) * data[current.alpabet].d[current.type][xkey][ykey] + Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000 : Number(document.getElementById("dCount").value) * data[current.alpabet].d[current.type][xkey][ykey],
             type: "d",
             ss: current.isS,
-            s: Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000,
             t: current.type,
-            count: Number(document.getElementById("dCount").value)
         });
         renderList();
     }
@@ -448,9 +444,8 @@ function addG() {
         datas.push({
             title: `걸레받이, ${document.getElementById("gColors").value}, ${document.getElementById("gX").value}, ${document.getElementById("gY").value}, ${document.getElementById("gCount").value}, `,
             index: id++,
-            xkey,
+            result: Number(document.getElementById("gCount").value) * data[current.alpabet].g[xkey],
             type: "g",
-            count: Number(document.getElementById("gCount").value)
         });
         renderList();
     }
@@ -464,9 +459,8 @@ function addM() {
         datas.push({
             title: `몰딩, ${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, `,
             index: id++,
-            ykey: yKey,
+            result: Number(document.getElementById("mCount").value) * data[current.alpabet].m[yKey],
             type: "m",
-            count: Number(document.getElementById("mCount").value)
         });
         renderList();
     }
@@ -478,7 +472,7 @@ function addK() {
             title: `${"일반형 경첩 및 댐퍼 경첩 1조"}, ${document.getElementById("kCount").value}, ${3000 * Number(document.getElementById("kCount").value)}, `,
             index: id++,
             type: "k",
-            count: Number(document.getElementById("kCount").value)
+            result: 3000 * Number(document.getElementById("kCount").value),
         });
         renderList();
     }
@@ -516,26 +510,7 @@ function onChangeType(e) {
 }
 
 function renderSubmit() {
-    let result = datas.map(v => {
-        switch(v.type) {
-            case "d":
-                return {
-                    result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
-                }
-            case "g":
-                return {
-                    result: data[current.alpabet].g[v.xkey] * v.count
-                }
-            case "m":
-                return {
-                    result: data[current.alpabet].m[v.ykey] * v.count
-                }
-            case "k":
-                return {
-                    result: 3000 * v.count
-                }
-        }
-    }).reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+    let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
 
     document.getElementById("t").innerHTML = result;
     document.getElementById("c").innerHTML = result / 1000;
@@ -555,40 +530,18 @@ function onChangeS(e) {
     renderList();
 }
 
-function onSubmit(e) {    const temp = datas.map(v => {
-        switch(v.type) {
-            case "d":
-                if(v.ss) {
-                    return {
-                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
-                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
-                    }
-                } else {
-                    return {
-                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count),
-                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count,
-                    }
-                }
-            case "g":
-                return {
-                    title: v.title + data[current.alpabet].g[v.xkey] * v.count,
-                    result: data[current.alpabet].g[v.xkey] * v.count,
-                }
-            case "m":
-                return {
-                    title: v.title + data[current.alpabet].m[v.ykey] * v.count,
-                    result: data[current.alpabet].m[v.ykey] * v.count
-                }
-            case "k":
-                return {
-                    title: v.title + 3000 * v.count,
-                    result: 3000 * v.count
-                }
-        }
-    })
-    let result = temp.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
-
+function onSubmit(e) {
     e.preventDefault();
+    let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+    console.log(result, JSON.stringify({
+            name: document.getElementById("name").value,
+            tel: document.getElementById("phone").value,
+            need: document.getElementById("need").value,
+            total: result,
+            c: result / 1000,
+            data: datas
+        }));
+
     fetch("https://script.google.com/macros/s/AKfycbyfVno0y_GNgXXTqRMMmQ5CbL1N8YpMQpxbe2UrQt5ONsXH6LkJXfHk8UgQm6lDihxjwA/exec", {
         method: 'POST',
         body: JSON.stringify({
@@ -597,7 +550,7 @@ function onSubmit(e) {    const temp = datas.map(v => {
             need: document.getElementById("need").value,
             total: result,
             c: result / 1000,
-            data: temp
+            data: datas
         }),
         headers: {
             "Content-Type": "application/json",
