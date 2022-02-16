@@ -181,10 +181,10 @@ h3 {
         },
         g: {
             colors: ['매트 화이트', '매트 캐시미어', '매트 밀크화이트', '매트 샌드그레이', '매트 아이보리', '매트 라이트그레이', '매트 브라운', '매트 그레이', '매트 로즈브라운', '매트 다크그레이', '매트 카페브라운', '매트 블랙', '매트 코튼블루', '매트 로지핑크', '매트 미스트그린', '매트 바이올렛', '매트 스모키올리브', '매트 딥그린', '매트 딥블루', '매트 인디고', '소프트 브라운', '소프트 그레이', '소프트 민트', '소프트 파스타치오', '글로시화이트', '글로시 캐시미어', '글로시 밀크화이트', '글로시 샌드그레이', '글로시 아이보리', '글로시 라이트그레이', '글로시 브라운', '글로시 그레이', '글로시 로즈브라운', '글로시 다크그레이', '글로시 카페브라운', '글로시 블랙', '글로시 코튼블루', '글로시 로지핑크', '글로시미스트그린', '글로시 바이올렛', '글로시 스모키올리브', '글로시 딥그린', '글로시 딥블루', '글로시 인디고', '라이트 그레이', '샌드 브라운', '블루 그레이', '크림월넛', '웨이브 화이트', '웨이브 그레이', '마블 화이트', '마블 블랙', '도브 화이트', '스톤 화이트', '스톤 그레이', '스톤 블랙', '윈체스터 월넛', '소프트 월넛', '트리플 오크 브라운', '코임브라', '텐 파인 화이트', '망플 비치'],
-            minx: 50,
-            maxx: 300,
-            miny: 100,
-            maxy: 2400,
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
             165: 34000,
             300: 68000
         },
@@ -233,10 +233,10 @@ h3 {
         },
         g: {
             colors: ['레더 크림', '레더 모카', '콘크리트 화이트', '콘트리트 그레이', '매트 펄 화이트', '매트 펄 다크그레이', '매트 펄 인디고', '매트 펄 블랙', '글로시 펄 화이트', '글로시 펄 다크그레이', '글로시 펄 인디고', '글로시 펄 블랙'],
-            minx: 50,
-            maxx: 300,
-            miny: 100,
-            maxy: 2400,
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
             165: 36000 ,
             300: 72000 
         },
@@ -283,10 +283,10 @@ h3 {
         },
         g: {
             colors: ['사피아노 화이트', '사피아노 그레이', '사피아노 블루', '헤어라인 화이트', '헤어라인 그레이', '슈가 엘름', '프렌치 오크', '피넛 오크', '카카오 월넛', '크림 화이트', '크림 라이트 그레이'],
-            minx: 50,
-            maxx: 300,
-            miny: 100,
-            maxy: 2400,
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
             165: 36000 ,
             300: 72000 
         },
@@ -332,10 +332,10 @@ h3 {
         },
         g: {
             colors: ['메탈 바이브레이션 실버', '메탈 바이브레이션 브라운', '메탈 헤어라인'],
-            minx: 50,
-            maxx: 300,
-            miny: 100,
-            maxy: 2400,
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
             165: 43000 ,
             300: 86000 
         },
@@ -424,7 +424,7 @@ function addD() {
         }
         
         datas.push({
-            title: `${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").checked ? "상부장" : "하부장"}, 스마트바 여부 ${current.isS ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
+            title: `도어, ${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").checked ? "상부장" : "하부장"}, 스마트바 여부 ${current.isS ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
             index: id++,
             xkey,
             ykey,
@@ -441,11 +441,11 @@ function addD() {
 function addG() {
     if(document.getElementById("gCount").value !== "") {
         if(!document.getElementById("gX").validity.valid || !document.getElementById("gY").validity.valid) return;
-        const gx = Number(document.getElementById("gX").value);
-        const xkey = gx <= 165 ? 165 : 300;
+        const gy = Number(document.getElementById("gY").value);
+        const xkey = gy <= 165 ? 165 : 300;
         
         datas.push({
-            title: `${document.getElementById("gColors").value}, ${document.getElementById("gX").value}, ${document.getElementById("gY").value}, ${document.getElementById("gCount").value}, `,
+            title: `걸레받이, ${document.getElementById("gColors").value}, ${document.getElementById("gX").value}, ${document.getElementById("gY").value}, ${document.getElementById("gCount").value}, `,
             index: id++,
             xkey,
             type: "g",
@@ -461,7 +461,7 @@ function addM() {
         const my = Number(document.getElementById("mY").value);
         const yKey = my <= 1220 ? 1220 : 2400;
         datas.push({
-            title: `${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, `,
+            title: `몰딩, ${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, `,
             index: id++,
             ykey: yKey,
             type: "m",
@@ -555,7 +555,26 @@ function onChangeS(e) {
 }
 
 function onSubmit(e) {
-    let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+    let result = datas.map(v => {
+        switch(v.type) {
+            case "d":
+                return {
+                    result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                }
+            case "g":
+                return {
+                    result: data[current.alpabet].g[v.xkey] * v.count
+                }
+            case "m":
+                return {
+                    result: data[current.alpabet].m[v.ykey] * v.count
+                }
+            case "k":
+                return {
+                    result: 3000 * v.count
+                }
+        }
+    }).reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
 
     e.preventDefault();
     fetch("https://script.google.com/macros/s/AKfycbyfVno0y_GNgXXTqRMMmQ5CbL1N8YpMQpxbe2UrQt5ONsXH6LkJXfHk8UgQm6lDihxjwA/exec", {
