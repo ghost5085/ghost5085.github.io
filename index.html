@@ -70,7 +70,7 @@ h3 {
                 </label>
                 <label class="col">
                     하부장
-                    <input class="form-check-input" type="radio" name="dir" id="dir" value="하부장">
+                    <input class="form-check-input" type="radio" name="dir" value="하부장">
                 </label>
             </div>
             <div class="col">
@@ -371,9 +371,9 @@ function renderList() {
     document.getElementById("list").innerHTML = datas.map(v => {
         switch(v.type) {
             case "d":
-                if(current.isS) {
+                if(v.ss) {
                     return {
-                        title: v.title + v.st(current.isS) + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
+                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
                         result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
                     }
                 } else {
@@ -424,13 +424,13 @@ function addD() {
         }
         
         datas.push({
-            title: `${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").value}, `,
+            title: `${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").checked ? "상부장" : "하부장"}, 스마트바 여부 ${current.isS ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
             index: id++,
             xkey,
             ykey,
             type: "d",
+            ss: current.isS,
             s: Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000,
-            st: (b) => `스마트바 여부 ${b ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
             t: current.type,
             count: Number(document.getElementById("dCount").value)
         });
