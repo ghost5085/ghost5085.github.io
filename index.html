@@ -555,27 +555,38 @@ function onChangeS(e) {
     renderList();
 }
 
-function onSubmit(e) {
-    let result = datas.map(v => {
+function onSubmit(e) {    const temp = datas.map(v => {
         switch(v.type) {
             case "d":
-                return {
-                    result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                if(v.ss) {
+                    return {
+                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s),
+                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count + v.s,
+                    }
+                } else {
+                    return {
+                        title: v.title + (data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count),
+                        result: data[current.alpabet].d[v.t][v.xkey][v.ykey] * v.count,
+                    }
                 }
             case "g":
                 return {
-                    result: data[current.alpabet].g[v.xkey] * v.count
+                    title: v.title + data[current.alpabet].g[v.xkey] * v.count,
+                    result: data[current.alpabet].g[v.xkey] * v.count,
                 }
             case "m":
                 return {
+                    title: v.title + data[current.alpabet].m[v.ykey] * v.count,
                     result: data[current.alpabet].m[v.ykey] * v.count
                 }
             case "k":
                 return {
+                    title: v.title + 3000 * v.count,
                     result: 3000 * v.count
                 }
         }
-    }).reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+    })
+    let result = temp.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
 
     e.preventDefault();
     fetch("https://script.google.com/macros/s/AKfycbyfVno0y_GNgXXTqRMMmQ5CbL1N8YpMQpxbe2UrQt5ONsXH6LkJXfHk8UgQm6lDihxjwA/exec", {
@@ -586,7 +597,7 @@ function onSubmit(e) {
             need: document.getElementById("need").value,
             total: result,
             c: result / 1000,
-            data: datas
+            data: temp
         }),
         headers: {
             "Content-Type": "application/json",
