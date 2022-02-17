@@ -375,27 +375,32 @@ function renderList() {
                     return {
                         title: v.title + v.result,
                         result: v.result,
+                        index: v.index
                     }
                 } else {
                     return {
                         title: v.title + v.result,
                         result: v.result,
+                        index: v.index
                     }
                 }
             case "g":
                 return {
                     title: v.title + v.result,
                     result: v.result,
+                        index: v.index
                 }
             case "m":
                 return {
                     title: v.title + v.result,
-                    result: v.result
+                    result: v.result,
+                        index: v.index
                 }
             case "k":
                 return {
                     title: v.title + v.result,
-                    result: v.result
+                    result: v.result,
+                        index: v.index
                 }
         }
     }).map(v => `<div class="row"> <div class="col">${v.title}</div><button type="button" class="btn btn-danger" onclick="remove(${v.index})">삭제하기</button> </div>`)
