@@ -30,7 +30,7 @@ h3 {
     </style>
 </head>
 <body>
-    <form class="container" onsubmit="onSubmit(event)">
+    <form class="container">
         <h3>도어</h3>
         <div class="row">
             <select class="form-select col" id="alpabet" onchange="onChangeAlpabet(event)">
@@ -144,7 +144,7 @@ h3 {
         <div class="row">
             <textarea class="form-control" id="need" placeholder="요구사항"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary justify-content-center" type="submit">견적서 전송</button>
+        <button type="submit" class="btn btn-primary justify-content-center" onclick="onSubmit(event)">견적서 전송</button>
         견적서 보내신 후 01055311989 이 번호로 연락바랍니다.
     </form>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
@@ -418,7 +418,9 @@ function addD() {
         const xkey = dx <= 300 ? 300 : Math.ceil(dx / 100) * 100;
         let ykey = dy <= 600 ? 600 : Math.ceil(dy / 100) * 100;
         if(ykey > 800) {
-            if(ykey <= 1200) {
+            if(ykey <= 1000) {
+                ykey = 1000;
+            } else if(ykey <= 1200) {
                 ykey = 1200;
             } else if(ykey <= 1400) {
                 ykey = 1400;
