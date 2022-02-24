@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .col:not(:last-child) {
+    margin-right: 1rem;
+}
+
+.row {
+    margin: 10px 0;
+}
+
+h3 {
+    margin: 20px 0 30px;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+}
+
+.flex p {
+    margin: 30px 5px;
+}
+    </style>
+</head>
+<body>
+    <form class="container">
+        <h3>도어</h3>
+        <div class="row">
+            <select class="form-select col" id="alpabet" onchange="onChangeAlpabet(event)">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+            <select class="form-select col" id="type" onchange="onChangeType(event)">
+                <option value="일반">일반</option>
+                <option value="빗각">빗각</option>
+            </select>
+        </div>
+        <div class="row">
+            <select class="form-select col" id="doorTypes" onchange="onChangeDoorTypes(event)">
+            </select>
+            <select class="form-select col" id="doorColors">
+            </select>
+        </div>
+        <div class="row">
+            <input class="form-control col" type="number" id="dX" min="100" max="900" placeholder="도어 가로 (mm)">
+            <input class="form-control col" type="number" id="dY" min="10" max="2000" placeholder="도어 세로 (mm)">
+        </div>
+        <div class="row">
+            <input class="form-control col" type="number" id="dD" readonly placeholder="두께 18mm 고정">
+            <input class="form-control col" type="number" id="dCount" placeholder="도어 수량">
+        </div>
+        <div class="row">
+            <input class="form-control col" type="text" id="kp" placeholder="경첩위치 ex)좌경첩/우경첩/윗경첩/서랍">
+            <input class="form-control col" type="text" id="bp" placeholder="보링위치 ex)상100/하100/서랍">
+        </div>
+        <div class="row">
+            <div class="col">
+                <label class="col">
+                    상부장
+                    <input class="form-check-input" type="radio" name="dir" id="dir" value="상부장" checked>
+                </label>
+                <label class="col">
+                    하부장
+                    <input class="form-check-input" type="radio" name="dir" value="하부장">
+                </label>
+            </div>
+            <div class="col">
+                스마트바 추가 여부
+                <label class="col">
+                    O
+                    <input onchange="onChangeS(event)" class="form-check-input" type="radio" name="ds" id="dsv" value="true">
+                </label>
+                <label class="col">
+                    X
+                    <input onchange="onChangeS(event)" class="form-check-input" type="radio" name="ds" id="dsv" value="false" checked>
+                </label>
+            </div>
+        </div>
+        <div class="row" id="so" style="display: none;">
+            <select class="form-select col" id="sColors">
+                <option value="실버">실버</option>
+                <option value="블랙">블랙</option>
+                <option value="화이트">화이트</option>
+                <option value="골드">골드</option>
+            </select>
+            <input min="1" max="70" class="form-control col" type="number" id="sx" placeholder="손잡이 길이 (cm)">
+        </div>
+        <button onclick="addD()" type="button" class="btn btn-primary justify-content-center" type="button">담기</button>
+        <h3>걸레받이</h3>
+        <div class="row">
+            <input class="form-control col" type="number" id="gX" placeholder="걸레받이 가로 (mm)">
+            <input class="form-control col" type="number" id="gY" placeholder="걸레받이 세로 (mm)">
+        </div>
+        <div class="row">
+            <select class="form-select col" id="gColors">
+            </select>
+            <input class="form-control col" type="number" id="gCount" placeholder="걸레받이 수량">
+        </div>
+        <button onclick="addG()" type="button" class="btn btn-primary justify-content-center" type="button">담기</button>
+        <h3>몰딩</h3>
+        <div class="row">
+            <input class="form-control col" type="number" id="mX" placeholder="몰딩 가로 (mm)">
+            <input class="form-control col" type="number" id="mY" placeholder="몰딩 세로 (mm)">
+        </div>
+        <div class="row">
+            <select class="form-select col" id="mColors">
+            </select>
+            <input class="form-control col" type="number" id="mCount" placeholder="몰딩 수량">
+        </div>
+        <button onclick="addM()" type="button" class="btn btn-primary justify-content-center" type="button">담기</button>
+        <h3>경첩</h3>
+        <div class="row">
+            <select class="form-select col" id="k">
+                <option value="일반형 경첩 및 댐퍼 경첩 1조">일반형 경첩 및 댐퍼 경첩 1조</option>
+            </select>
+            <input class="form-control col" type="number" id="kCount" placeholder="경첩 수량">
+        </div>
+        <button onclick="addK()" type="button" class="btn btn-primary justify-content-center" type="button">담기</button>
+        <div class="row" id="list">
+        </div>
+        <div class="flex">
+            <p>총견적: </p>
+            <p id="t">0</p>
+            <p>,</p>
+            <p>천원단위 주문 갯수: </p> 
+            <p id="c">0</p>
+        </div>
+        <div class="row">
+            <input class="form-control col" type="text" id="name" placeholder="주문자명">
+            <input class="form-control col" type="tel" id="phone" placeholder="연락처">
+        </div>
+        <div class="row">
+            <textarea class="form-control" id="need" placeholder="요구사항"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary justify-content-center" onclick="onSubmit(event)">견적서 전송</button>
+        견적서 보내신 후 01055311989 이 번호로 연락바랍니다.
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script>
+    const data = {
+    a: {
+        types: ["무광", "유광", "스톤", "우드"],
+        colors: {
+            무광: ['매트 화이트', '매트 캐시미어', '매트 밀크화이트', '매트 샌드그레이', '매트 아이보리', '매트 라이트그레이', '매트 브라운', '매트 그레이', '매트 로즈브라운', '매트 다크그레이', '매트 카페브라운', '매트 블랙', '매트 코튼블루', '매트 로지핑크', '매트 미스트그린', '매트 바이올렛', '매트 스모키올리브', '매트 딥그린', '매트 딥블루', '매트 인디고', '소프트 브라운', '소프트 그레이', '소프트 민트', '소프트 파스타치오'],
+            유광: ['글로시화이트', '글로시 캐시미어', '글로시 밀크화이트', '글로시 샌드그레이', '글로시 아이보리', '글로시 라이트그레이', '글로시 브라운', '글로시 그레이', '글로시 로즈브라운', '글로시 다크그레이', '글로시 카페브라운', '글로시 블랙', '글로시 코튼블루', '글로시 로지핑크', '글로시미스트그린', '글로시 바이올렛', '글로시 스모키올리브', '글로시 딥그린', '글로시 딥블루', '글로시 인디고', '라이트 그레이', '샌드 브라운', '블루 그레이', '크림월넛', '웨이브 화이트', '웨이브 그레이', '마블 화이트', '마블 블랙', '도브 화이트'],
+            스톤: ["스톤 화이트", "스톤 그레이", "스톤 블랙"],
+            우드: ["윈체스터 월넛", "소프트 월넛", "트리플 오크 브라운", "코임브라", "텐 파인 화이트", "망플 비치"],
+        },
+        d: {
+            minx: 100,
+            maxx: 900,
+            miny: 100,
+            maxy: 2000,
+            빗각: {
+                "300": { "600":29000, "700":31000, "800":34000, "1000":46000, "1200":51000, "1400":57000, "1600":66000, "1800":77000, "2000":97000},
+                "400": { "600":31000, "700":34000, "800":40000, "1000":57000, "1200":63000, "1400":74000, "1600":86000, "1800":97000, "2000":108000},
+                "500": { "600":34000, "700":40000, "800":46000, "1000":66000, "1200":74000, "1400":86000, "1600":97000, "1800":120000, "2000":134000},
+                "600": { "600":40000, "700":43000, "800":54000, "1000":74000, "1200":83000, "1400":94000, "1600":103000, "1800":128000, "2000":143000},
+                "700": { "600":48000, "700":54000, "800":66000, "1000":88000, "1200":105000, "1400":123000, "1600":140000, "1800":157000, "2000":174000},
+                "800": { "600":57000, "700":63000, "800":71000, "1000":97000, "1200":117000, "1400":137000, "1600":157000, "1800":177000, "2000":197000},
+                "900": { "600":66000, "700":71000, "800":80000, "1000":111000, "1200":137000, "1400":162000, "1600":188000, "1800":214000, "2000":239000}
+            },
+            일반: {
+                "300": { "600":18000, "700":25000, "800":28000, "1000":39000, "1200":44000, "1400":50000, "1600":58000, "1800":69000, "2000":89000},
+                "400": { "600":25000, "700":28000, "800":33000, "1000":50000, "1200":55000, "1400":67000, "1600":78000, "1800":89000, "2000":100000},
+                "500": { "600":28000, "700":33000, "800":39000, "1000":58000, "1200":67000, "1400":78000, "1600":89000, "1800":111000, "2000":125000},
+                "600": { "600":33000, "700":36000, "800":47000, "1000":67000, "1200":75000, "1400":86000, "1600":94000, "1800":119000, "2000":133000},
+                "700": { "600":42000, "700":47000, "800":58000, "1000":80000, "1200":97000, "1400":114000, "1600":130000, "1800":147000, "2000":164000},
+                "800": { "600":50000, "700":55000, "800":64000, "1000":89000, "1200":108000, "1400":128000, "1600":147000, "1800":166000, "2000":186000},
+                "900": { "600":58000, "700":64000, "800":72000, "1000":103000, "1200":128000, "1400":153000, "1600":178000, "1800":203000, "2000":228000}
+            }
+        },
+        g: {
+            colors: ['매트 화이트', '매트 캐시미어', '매트 밀크화이트', '매트 샌드그레이', '매트 아이보리', '매트 라이트그레이', '매트 브라운', '매트 그레이', '매트 로즈브라운', '매트 다크그레이', '매트 카페브라운', '매트 블랙', '매트 코튼블루', '매트 로지핑크', '매트 미스트그린', '매트 바이올렛', '매트 스모키올리브', '매트 딥그린', '매트 딥블루', '매트 인디고', '소프트 브라운', '소프트 그레이', '소프트 민트', '소프트 파스타치오', '글로시화이트', '글로시 캐시미어', '글로시 밀크화이트', '글로시 샌드그레이', '글로시 아이보리', '글로시 라이트그레이', '글로시 브라운', '글로시 그레이', '글로시 로즈브라운', '글로시 다크그레이', '글로시 카페브라운', '글로시 블랙', '글로시 코튼블루', '글로시 로지핑크', '글로시미스트그린', '글로시 바이올렛', '글로시 스모키올리브', '글로시 딥그린', '글로시 딥블루', '글로시 인디고', '라이트 그레이', '샌드 브라운', '블루 그레이', '크림월넛', '웨이브 화이트', '웨이브 그레이', '마블 화이트', '마블 블랙', '도브 화이트', '스톤 화이트', '스톤 그레이', '스톤 블랙', '윈체스터 월넛', '소프트 월넛', '트리플 오크 브라운', '코임브라', '텐 파인 화이트', '망플 비치'],
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
+            165: 34000,
+            300: 68000
+        },
+        m: {
+            colors: ['매트 화이트', '매트 캐시미어', '매트 밀크화이트', '매트 샌드그레이', '매트 아이보리', '매트 라이트그레이', '매트 브라운', '매트 그레이', '매트 로즈브라운', '매트 다크그레이', '매트 카페브라운', '매트 블랙', '매트 코튼블루', '매트 로지핑크', '매트 미스트그린', '매트 바이올렛', '매트 스모키올리브', '매트 딥그린', '매트 딥블루', '매트 인디고', '소프트 브라운', '소프트 그레이', '소프트 민트', '소프트 파스타치오', '글로시화이트', '글로시 캐시미어', '글로시 밀크화이트', '글로시 샌드그레이', '글로시 아이보리', '글로시 라이트그레이', '글로시 브라운', '글로시 그레이', '글로시 로즈브라운', '글로시 다크그레이', '글로시 카페브라운', '글로시 블랙', '글로시 코튼블루', '글로시 로지핑크', '글로시미스트그린', '글로시 바이올렛', '글로시 스모키올리브', '글로시 딥그린', '글로시 딥블루', '글로시 인디고', '라이트 그레이', '샌드 브라운', '블루 그레이', '크림월넛', '웨이브 화이트', '웨이브 그레이', '마블 화이트', '마블 블랙', '도브 화이트', '스톤 화이트', '스톤 그레이', '스톤 블랙', '윈체스터 월넛', '소프트 월넛', '트리플 오크 브라운', '코임브라', '텐 파인 화이트', '망플 비치'],
+            miny: 10,
+            maxy: 200,
+            minx: 100,
+            maxx: 2400,
+            1220: 17000,
+            2400: 31000
+        },
+        k: 3000
+    },
+    b: {
+        types: ["무광 펄", "유광 펄", "가죽", "스톤"],
+        colors: {
+            "무광 펄": ['매트 펄 화이트', '매트 펄 다크그레이', '매트 펄 인디고', '매트 펄 블랙'],
+            "유광 펄": ['글로시 펄 화이트', '글로시 펄 다크그레이', '글로시 펄 인디고', '글로시 펄 블랙'],
+            가죽: ["레더 크림", "레더 모카"],
+            스톤: ["콘크리트 화이트", "콘크리트  그레이"],
+        },
+        d: {
+            minx: 100,
+            maxx: 900,
+            miny: 100,
+            maxy: 2000,
+            빗각: {
+                "300": { "600":31000, "700":33000, "800":36000, "1000":48000, "1200":53000, "1400":59000, "1600":68000, "1800":79000, "2000":99000},
+                "400": { "600":33000, "700":36000, "800":42000, "1000":59000, "1200":65000, "1400":76000, "1600":88000, "1800":99000, "2000":110000},
+                "500": { "600":36000, "700":42000, "800":48000, "1000":68000, "1200":76000, "1400":88000, "1600":99000, "1800":122000, "2000":136000},
+                "600": { "600":42000, "700":45000, "800":56000, "1000":76000, "1200":85000, "1400":96000, "1600":105000, "1800":130000, "2000":145000},
+                "700": { "600":50000, "700":56000, "800":68000, "1000":90000, "1200":107000, "1400":125000, "1600":142000, "1800":159000, "2000":176000},
+                "800": { "600":59000, "700":65000, "800":73000, "1000":99000, "1200":119000, "1400":139000, "1600":159000, "1800":179000, "2000":199000},
+                "900": { "600":68000, "700":73000, "800":82000, "1000":113000, "1200":139000, "1400":164000, "1600":190000, "1800":216000, "2000":241000}
+            },
+            일반: {
+                "300": { "600":20000, "700":27000, "800":30000, "1000":41000, "1200":46000, "1400":52000, "1600":60000, "1800":71000, "2000":91000},
+                "400": { "600":27000, "700":30000, "800":35000, "1000":52000, "1200":57000, "1400":69000, "1600":80000, "1800":91000, "2000":102000},
+                "500": { "600":30000, "700":35000, "800":41000, "1000":60000, "1200":69000, "1400":80000, "1600":91000, "1800":113000, "2000":127000},
+                "600": { "600":35000, "700":38000, "800":49000, "1000":69000, "1200":77000, "1400":88000, "1600":96000, "1800":121000, "2000":135000},
+                "700": { "600":44000, "700":49000, "800":60000, "1000":82000, "1200":99000, "1400":116000, "1600":132000, "1800":149000, "2000":166000},
+                "800": { "600":52000, "700":57000, "800":66000, "1000":91000, "1200":110000, "1400":130000, "1600":149000, "1800":168000, "2000":188000},
+                "900": { "600":60000, "700":66000, "800":74000, "1000":105000, "1200":130000, "1400":155000, "1600":180000, "1800":205000, "2000":230000}
+            }
+        },
+        g: {
+            colors: ['레더 크림', '레더 모카', '콘크리트 화이트', '콘트리트 그레이', '매트 펄 화이트', '매트 펄 다크그레이', '매트 펄 인디고', '매트 펄 블랙', '글로시 펄 화이트', '글로시 펄 다크그레이', '글로시 펄 인디고', '글로시 펄 블랙'],
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
+            165: 36000 ,
+            300: 72000 
+        },
+        m: {
+            colors: ['레더 크림', '레더 모카', '콘크리트 화이트', '콘트리트 그레이', '매트 펄 화이트', '매트 펄 다크그레이', '매트 펄 인디고', '매트 펄 블랙', '글로시 펄 화이트', '글로시 펄 다크그레이', '글로시 펄 인디고', '글로시 펄 블랙'],
+            miny: 10,
+            maxy: 200,
+            minx: 100,
+            maxx: 2400,
+            1220: 19000,
+            2400: 34000
+        },
+        k: 3000
+    },
+    c: {
+        types: ["하이엔드 우드", "하이엔드 인테리어"],
+        colors: {
+            "하이엔드 우드": ['슈가 엘름', '프렌치 오크', '피넛 오크', '카카오 월넛'],
+            "하이엔드 인테리어": ['사피아노 화이트', '사피아노 그레이', '사피아노 블루', '헤어라인 화이트', '헤어라인 그레이'],
+        },
+        d: {
+            minx: 100,
+            maxx: 900,
+            miny: 100,
+            maxy: 2000,
+            빗각: {
+                "300": { "600":34000, "700":37000, "800":40000, "1000":54000, "1200":60000, "1400":66000, "1600":74000, "1800":86000, "2000":105000},
+                "400": { "600":37000, "700":40000, "800":46000, "1000":66000, "1200":71000, "1400":83000, "1600":94000, "1800":105000, "2000":117000},
+                "500": { "600":40000, "700":46000, "800":51000, "1000":74000, "1200":83000, "1400":94000, "1600":105000, "1800":128000, "2000":143000},
+                "600": { "600":46000, "700":48000, "800":60000, "1000":83000, "1200":91000, "1400":103000, "1600":111000, "1800":137000, "2000":151000},
+                "700": { "600":54000, "700":60000, "800":71000, "1000":97000, "1200":114000, "1400":131000, "1600":148000, "1800":165000, "2000":182000},
+                "800": { "600":63000, "700":68000, "800":77000, "1000":105000, "1200":125000, "1400":145000, "1600":165000, "1800":185000, "2000":205000},
+                "900": { "600":71000, "700":77000, "800":86000, "1000":120000, "1200":145000, "1400":171000, "1600":197000, "1800":222000, "2000":248000}
+            },
+            일반: {
+                "300": { "600":32000, "700":35000, "800":38000, "1000":54000, "1200":60000, "1400":66000, "1600":76000, "1800":88000, "2000":110000},
+                "400": { "600":35000, "700":38000, "800":44000, "1000":66000, "1200":72000, "1400":85000, "1600":98000, "1800":110000, "2000":123000},
+                "500": { "600":38000, "700":44000, "800":50000, "1000":76000, "1200":85000, "1400":98000, "1600":110000, "1800":136000, "2000":151000},
+                "600": { "600":44000, "700":47000, "800":60000, "1000":85000, "1200":95000, "1400":107000, "1600":117000, "1800":145000, "2000":161000},
+                "700": { "600":54000, "700":60000, "800":72000, "1000":100000, "1200":120000, "1400":139000, "1600":158000, "1800":176000, "2000":195000},
+                "800": { "600":63000, "700":69000, "800":79000, "1000":110000, "1200":132000, "1400":154000, "1600":176000, "1800":199000, "2000":221000},
+                "900": { "600":72000, "700":79000, "800":88000, "1000":126000, "1200":154000, "1400":183000, "1600":211000, "1800":240000, "2000":268000}
+            }
+        },
+        g: {
+            colors: ['사피아노 화이트', '사피아노 그레이', '사피아노 블루', '헤어라인 화이트', '헤어라인 그레이', '슈가 엘름', '프렌치 오크', '피넛 오크', '카카오 월넛', '크림 화이트', '크림 라이트 그레이'],
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
+            165: 36000 ,
+            300: 72000 
+        },
+        m: {
+            colors: ['사피아노 화이트', '사피아노 그레이', '사피아노 블루', '헤어라인 화이트', '헤어라인 그레이', '슈가 엘름', '프렌치 오크', '피넛 오크', '카카오 월넛', '크림 화이트', '크림 라이트 그레이'],
+            miny: 10,
+            maxy: 150,
+            minx: 100,
+            maxx: 2400,
+            1220: 19000,
+            2400: 36000
+        },
+        k: 3000
+    },
+    d: {
+        types: ["메탈"],
+        colors: {
+            메탈: ['메탈 바이브레이션 실버', '메탈 바이브레이션 브라운', '메탈 헤어라인'],
+        },
+        d: {
+            minx: 100,
+            maxx: 900,
+            miny: 100,
+            maxy: 2000,
+            빗각: {
+                "300": { "600":38000, "700":41000, "800":44000, "1000":58000, "1200":64000, "1400":70000, "1600":78000, "1800":90000, "2000":109000},
+                "400": { "600":41000, "700":44000, "800":50000, "1000":70000, "1200":75000, "1400":87000, "1600":98000, "1800":109000, "2000":121000},
+                "500": { "600":44000, "700":50000, "800":55000, "1000":78000, "1200":87000, "1400":98000, "1600":109000, "1800":134000, "2000":147000},
+                "600": { "600":50000, "700":52000, "800":64000, "1000":87000, "1200":95000, "1400":107000, "1600":115000, "1800":141000, "2000":155000},
+                "700": { "600":58000, "700":64000, "800":75000, "1000":101000, "1200":118000, "1400":135000, "1600":152000, "1800":169000, "2000":186000},
+                "800": { "600":67000, "700":72000, "800":81000, "1000":109000, "1200":129000, "1400":149000, "1600":169000, "1800":189000, "2000":209000},
+                "900": { "600":75000, "700":81000, "800":90000, "1000":124000, "1200":149000, "1400":175000, "1600":201000, "1800":226000, "2000":252000}
+            },
+            일반: {
+                "300": { "600":36000, "700":39000, "800":42000, "1000":58000, "1200":64000, "1400":70000, "1600":80000, "1800":920000, "2000":114000},
+                "400": { "600":39000, "700":42000, "800":48000, "1000":70000, "1200":76000, "1400":89000, "1600":102000, "1800":114000, "2000":127000},
+                "500": { "600":42000, "700":48000, "800":54000, "1000":80000, "1200":89000, "1400":102000, "1600":114000, "1800":140000, "2000":155000},
+                "600": { "600":48000, "700":51000, "800":64000, "1000":89000, "1200":99000, "1400":111000, "1600":121000, "1800":149000, "2000":165000},
+                "700": { "600":58000, "700":64000, "800":76000, "1000":104000, "1200":124000, "1400":143000, "1600":162000, "1800":180000, "2000":199000},
+                "800": { "600":67000, "700":73000, "800":83000, "1000":114000, "1200":136000, "1400":158000, "1600":180000, "1800":203000, "2000":225000},
+                "900": { "600":76000, "700":83000, "800":92000, "1000":130000, "1200":158000, "1400":187000, "1600":215000, "1800":244000, "2000":272000}
+            }
+        },
+        g: {
+            colors: ['메탈 바이브레이션 실버', '메탈 바이브레이션 브라운', '메탈 헤어라인'],
+            miny: 50,
+            maxy: 300,
+            minx: 100,
+            maxx: 2400,
+            165: 43000 ,
+            300: 86000 
+        },
+        m: {
+            colors: ['메탈 바이브레이션 실버', '메탈 바이브레이션 브라운', '메탈 헤어라인'],
+            miny: 10,
+            maxy: 200,
+            minx: 100,
+            maxx: 2400,
+            1220: 26000,
+            2400: 43000
+        },
+        k: 3000
+    },
+}</script>
+    <script>
+        let current = {
+    alpabet: "A",
+    doorType: "무광",
+    type: "일반",
+    isS: false
+}
+const datas = [];
+let id = 0;
+
+function remove(i) {
+    console.log(i);
+    datas.splice(datas.findIndex(v => v.index === i), 1);
+    renderList();
+}
+
+function renderList() {
+    document.getElementById("list").innerHTML = datas.map(v => {
+        switch(v.type) {
+            case "d":
+                if(v.ss) {
+                    return {
+                        title: v.title + v.result,
+                        result: v.result,
+                        index: v.index
+                    }
+                } else {
+                    return {
+                        title: v.title + v.result,
+                        result: v.result,
+                        index: v.index
+                    }
+                }
+            case "g":
+                return {
+                    title: v.title + v.result,
+                    result: v.result,
+                        index: v.index
+                }
+            case "m":
+                return {
+                    title: v.title + v.result,
+                    result: v.result,
+                        index: v.index
+                }
+            case "k":
+                return {
+                    title: v.title + v.result,
+                    result: v.result,
+                        index: v.index
+                }
+        }
+    }).map(v => `<div class="row"> <div class="col">${v.title}</div><button type="button" class="btn btn-danger" onclick="remove(${v.index})">삭제하기</button> </div>`)
+    renderSubmit();
+}
+
+function addD() {
+    if(document.getElementById("dCount").value !== "") {
+        if(!document.getElementById("dX").validity.valid || !document.getElementById("dY").validity.valid) return;
+        const dx = Number(document.getElementById("dX").value);
+        const dy = Number(document.getElementById("dY").value);
+        const xkey = dx <= 300 ? 300 : Math.ceil(dx / 100) * 100;
+        let ykey = dy <= 600 ? 600 : Math.ceil(dy / 100) * 100;
+        if(ykey > 800) {
+            if(ykey <= 1000) {
+                ykey = 1000;
+            } else if(ykey <= 1200) {
+                ykey = 1200;
+            } else if(ykey <= 1400) {
+                ykey = 1400;
+            } else if(ykey <= 1600) {
+                ykey = 1600;
+            } else if(ykey <= 1800) {
+                ykey = 1800;
+            } else if(ykey <= 2000) {
+                ykey = 2000;
+            }
+        }
+        
+        datas.push({
+            title: `도어, ${current.doorType}, ${document.getElementById("doorColors").value}, ${current.type}, ${document.getElementById("dX").value}, ${document.getElementById("dY").value}, ${document.getElementById("dCount").value}, ${document.getElementById("kp").value}, ${document.getElementById("bp").value},  ${data[current.alpabet].d[current.type][xkey][ykey] * Number(document.getElementById("dCount").value)}, ${document.getElementById("dir").checked ? "상부장" : "하부장"}, 스마트바 여부 ${current.isS ? `O, ${document.getElementById("sx").value}, ${document.getElementById("sColors").value}, ${Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000}` : "X"}, `,
+            index: id++,
+            result: current.isS ? Number(document.getElementById("dCount").value) * data[current.alpabet].d[current.type][xkey][ykey] + Math.ceil(Number(document.getElementById("sx").value) / 5) * 1000 : Number(document.getElementById("dCount").value) * data[current.alpabet].d[current.type][xkey][ykey],
+            type: "d",
+            ss: current.isS,
+            t: current.type,
+        });
+        renderList();
+    }
+}
+
+function addG() {
+    if(document.getElementById("gCount").value !== "") {
+        if(!document.getElementById("gX").validity.valid || !document.getElementById("gY").validity.valid) return;
+        const gy = Number(document.getElementById("gY").value);
+        const xkey = gy <= 165 ? 165 : 300;
+        
+        datas.push({
+            title: `걸레받이, ${document.getElementById("gColors").value}, ${document.getElementById("gX").value}, ${document.getElementById("gY").value}, ${document.getElementById("gCount").value}, `,
+            index: id++,
+            result: Number(document.getElementById("gCount").value) * data[current.alpabet].g[xkey],
+            type: "g",
+        });
+        renderList();
+    }
+}
+
+function addM() {
+    if(document.getElementById("mCount").value !== "") {
+        if(!document.getElementById("mY").validity.valid || !document.getElementById("mX").validity.valid) return;
+        const my = Number(document.getElementById("mX").value);
+        const yKey = my <= 1220 ? 1220 : 2400;
+        datas.push({
+            title: `몰딩, ${document.getElementById("mColors").value}, ${document.getElementById("mX").value}, ${document.getElementById("mY").value}, ${document.getElementById("mCount").value}, `,
+            index: id++,
+            result: Number(document.getElementById("mCount").value) * data[current.alpabet].m[yKey],
+            type: "m",
+        });
+        renderList();
+    }
+}
+
+function addK() {
+    if(document.getElementById("kCount").value !== "") {
+        datas.push({
+            title: `${"일반형 경첩 및 댐퍼 경첩 1조"}, ${document.getElementById("kCount").value}, ${3000 * Number(document.getElementById("kCount").value)}, `,
+            index: id++,
+            type: "k",
+            result: 3000 * Number(document.getElementById("kCount").value),
+        });
+        renderList();
+    }
+}
+
+function onChangeAlpabet(e) {
+    current.alpabet = e.target.value.toLowerCase();
+    document.getElementById("doorTypes").innerHTML = data[current.alpabet].types.map(c => `<option value="${c}">${c}</option>`);
+    document.getElementById("gColors").innerHTML = data[current.alpabet].g.colors.map(c => `<option value="${c}">${c}</option>`);
+    document.getElementById("mColors").innerHTML = data[current.alpabet].m.colors.map(c => `<option value="${c}">${c}</option>`);
+
+    document.getElementById("gX").setAttribute("min", data[current.alpabet].g.minx);
+    document.getElementById("gY").setAttribute("min", data[current.alpabet].g.miny);
+    document.getElementById("gX").setAttribute("max", data[current.alpabet].g.maxx);
+    document.getElementById("gY").setAttribute("max", data[current.alpabet].g.maxy);
+    document.getElementById("mX").setAttribute("min", data[current.alpabet].m.minx);
+    document.getElementById("mY").setAttribute("min", data[current.alpabet].m.miny);
+    document.getElementById("mX").setAttribute("max", data[current.alpabet].m.maxx);
+    document.getElementById("mY").setAttribute("max", data[current.alpabet].m.maxy);
+
+    renderList();
+
+    onChangeDoorTypes({ target: { value: data[current.alpabet].types[0] } });
+}
+
+function onChangeDoorTypes(e) {
+    current.doorType = e.target.value;
+    document.getElementById("doorColors").innerHTML = `
+        ${data[current.alpabet].colors[e.target.value].map(c => `<option value="${c}">${c}</option>`)}
+    `;
+}
+
+function onChangeType(e) {
+    current.type = e.target.value;
+}
+
+function renderSubmit() {
+    let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+
+    document.getElementById("t").innerHTML = result;
+    document.getElementById("c").innerHTML = result / 1000;
+}
+
+onChangeAlpabet({ target: { value: "A" } });
+onChangeDoorTypes({ target: { value: "무광" } });
+
+function onChangeS(e) {
+    if(e.target.value == "true") {
+        document.getElementById("so").style.display = "flex";
+        current.isS = true;
+    } else {
+        document.getElementById("so").style.display = "none";
+        current.isS = false;
+    }
+    renderList();
+}
+
+function onSubmit(e) {
+    e.preventDefault();
+    let result = datas.reduce((p, c) => ({ result: p.result + c.result }), { result: 0 }).result;
+    console.log(result, JSON.stringify({
+            name: document.getElementById("name").value,
+            tel: document.getElementById("phone").value,
+            need: document.getElementById("need").value,
+            total: result,
+            c: result / 1000,
+            data: datas
+        }));
+
+    fetch("https://script.google.com/macros/s/AKfycbyfVno0y_GNgXXTqRMMmQ5CbL1N8YpMQpxbe2UrQt5ONsXH6LkJXfHk8UgQm6lDihxjwA/exec", {
+        method: 'POST',
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            tel: document.getElementById("phone").value,
+            need: document.getElementById("need").value,
+            total: result,
+            c: result / 1000,
+            data: datas
+        }),
+        headers: {
+            "Content-Type": "application/json",
+        },
+        mode: "no-cors"
+    }).then(response => {
+        alert("견적서 전송 완료");
+        console.log("success:", response);
+    }).catch(err => {
+        alert("견적서 전송 실패");
+        console.log("Error:" + err);
+    });
+}
+
+    </script>
+</body>
+</html>
